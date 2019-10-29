@@ -1,0 +1,27 @@
+﻿@model LampWebStore.Models.Lamp[]
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h2>Lamps</h2>
+
+<p class="info">The basic table of all entities from DB.</p>
+<br/>
+
+<table class="table">
+    <tr class="info">
+        <td>Lamp type</td>
+        <td>Manufacturer</td>
+        <td>Cost</td>
+    </tr>
+
+    @foreach(var item in Model)
+    {
+        <tr>
+            <td>@item.LampType</td>
+            <td>@item.Manufacturer</td>
+            <td>$@item.Cost</td>
+        </tr>
+    }
+</table>
