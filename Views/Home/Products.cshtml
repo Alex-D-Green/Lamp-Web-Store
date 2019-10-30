@@ -1,7 +1,39 @@
-﻿@model LampWebStore.Models.Lamp[]
+﻿@model ProductsViewModel
+@using LampWebStore.Controllers
 
 @{
     ViewData["Title"] = "Products";
+
+
+    //Calculating sorting directions for the all fields
+
+    bool lampTypeByAsc = true;
+    bool manufacturerByAsc = true;
+    bool costByAsc = true;
+
+    string lampTypeClass = "";
+    string manufacturerClass = "";
+    string costClass = "";
+
+    const string classTemplate = "glyphicon glyphicon-chevron-{0}";
+
+    if(Model.SortingProp == @HomeController.SortByLampType)
+    {
+        lampTypeByAsc = !Model.SortByAsc;
+        lampTypeClass = String.Format(classTemplate, Model.SortByAsc ? "up" : "down");
+    }
+    else if(Model.SortingProp == @HomeController.SortByManufacturer)
+    {
+        manufacturerByAsc = !Model.SortByAsc;
+        manufacturerClass = String.Format(classTemplate, Model.SortByAsc ? "up" : "down");
+    }
+    else if(Model.SortingProp == @HomeController.SortByCost)
+    {
+        costByAsc = !Model.SortByAsc;
+        costClass = String.Format(classTemplate, Model.SortByAsc ? "up" : "down");
+    }
+
+    //TODO: Convert all that stuff above into a tag-helper...
 }
 
 <h2>Lamps</h2>
@@ -11,12 +43,24 @@
 
 <table class="table">
     <tr class="info">
-        <td>Lamp type</td>
-        <td>Manufacturer</td>
-        <td>Cost</td>
+        <td>
+            <a asp-controller="Home" asp-action="Products" 
+               asp-route-sortingProp="@HomeController.SortByLampType" 
+               asp-route-sortByAsc="@lampTypeByAsc"><span class="@lampTypeClass"></span> Lamp type</a>
+        </td>
+        <td>
+            <a asp-controller="Home" asp-action="Products" 
+               asp-route-sortingProp="@HomeController.SortByManufacturer"
+               asp-route-sortByAsc="@manufacturerByAsc"><span class="@manufacturerClass"></span> Manufacturer</a>
+        </td>
+        <td>
+            <a asp-controller="Home" asp-action="Products" 
+               asp-route-sortingProp="@HomeController.SortByCost"
+               asp-route-sortByAsc="@costByAsc"><span class="@costClass"></span> Cost</a>
+        </td>
     </tr>
 
-    @foreach(var item in Model)
+    @foreach(var item in Model.Lamps)
     {
         <tr>
             <td>@item.LampType</td>

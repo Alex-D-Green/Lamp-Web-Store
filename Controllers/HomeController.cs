@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 using LampWebStore.Models;
@@ -11,6 +13,11 @@ namespace LampWebStore.Controllers
 {
     public class HomeController: Controller
     {
+        //Constants with names of the fields that are available for sorting
+        public const string SortByLampType = "LampType";
+        public const string SortByManufacturer = "Manufacturer";
+        public const string SortByCost = "Cost";
+
         /// <summary>DB context to work with lamps store DB.</summary>
         private readonly LampsContext db;
 
@@ -33,13 +40,39 @@ namespace LampWebStore.Controllers
         /// List of the products.
         /// </summary>
         /// <remarks>It's async method cuz interaction with the DB could be quite time-consuming.</remarks>
-        public async Task<IActionResult> Products()
+        /// <param name="sortingProp">The property by which products will be sorted (or <c>null</c>).</param>
+        /// <param name="sortByAsc">Sort products in ascending order.</param>
+        public async Task<IActionResult> Products(string sortingProp, bool sortByAsc = true)
         {
-            Lamp[] lamps = await db.Lamps
-                                   .AsNoTracking() //To cut off waste of resources
-                                   .ToArrayAsync();
+            IQueryable<Lamp> ret = db.Lamps;
 
-            return View(lamps);
+            switch(sortingProp)
+            {
+                case SortByLampType:
+                    ret = sortByAsc ? ret.OrderBy(o => o.LampType) : ret.OrderByDescending(o => o.LampType); 
+                    break;
+
+                case SortByManufacturer:
+                    ret = sortByAsc ? ret.OrderBy(o => o.Manufacturer) : ret.OrderByDescending(o => o.Manufacturer);
+                    break;
+
+                case SortByCost:
+                    ret = sortByAsc ? ret.OrderBy(o => o.Cost) : ret.OrderByDescending(o => o.Cost);
+                    break;
+
+                case "":
+                case null: 
+                    break; //Sorting is not needed
+
+                default:
+                    throw new ArgumentException($"Inappropriate value {sortingProp}.", nameof(sortingProp));
+            }
+
+            return View(new ProductsViewModel { 
+                Lamps = await ret.AsNoTracking().ToArrayAsync(), 
+                SortingProp = sortingProp,
+                SortByAsc = sortByAsc
+            });
         }
 
         /// <summary>
