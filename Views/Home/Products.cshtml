@@ -38,25 +38,28 @@
 
 <h2>Lamps</h2>
 
-<p class="info">The basic table of all entities from DB.</p>
-<br/>
+<p class="info">The basic table of all entities from DB, with sorting and pagination.</p>
+<br />
 
 <table class="table">
     <tr class="info">
         <td>
-            <a asp-controller="Home" asp-action="Products" 
-               asp-route-sortingProp="@HomeController.SortByLampType" 
+            <a asp-controller="Home" asp-action="Products" asp-route-page="@Model.CurrentPage"
+               asp-route-sortingProp="@HomeController.SortByLampType"
                asp-route-sortByAsc="@lampTypeByAsc"><span class="@lampTypeClass"></span> Lamp type</a>
         </td>
         <td>
-            <a asp-controller="Home" asp-action="Products" 
+            <a asp-controller="Home" asp-action="Products" asp-route-page="@Model.CurrentPage"
                asp-route-sortingProp="@HomeController.SortByManufacturer"
                asp-route-sortByAsc="@manufacturerByAsc"><span class="@manufacturerClass"></span> Manufacturer</a>
         </td>
         <td>
-            <a asp-controller="Home" asp-action="Products" 
+            <a asp-controller="Home" asp-action="Products" asp-route-page="@Model.CurrentPage"
                asp-route-sortingProp="@HomeController.SortByCost"
                asp-route-sortByAsc="@costByAsc"><span class="@costClass"></span> Cost</a>
+        </td>
+        <td>
+            Photo
         </td>
     </tr>
 
@@ -66,6 +69,10 @@
             <td>@item.LampType</td>
             <td>@item.Manufacturer</td>
             <td>$@item.Cost</td>
+            <td><img src="@item.ImageRef" class="img-thumbnail" style="max-height:50pt"/></td>
         </tr>
     }
 </table>
+
+@* The example of a component invocation *@
+@await Component.InvokeAsync("Pagination", new { model = Model, controller = "Home", action = "Products" })

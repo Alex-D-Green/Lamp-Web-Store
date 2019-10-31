@@ -18,6 +18,10 @@ namespace LampWebStore.Controllers
         public const string SortByManufacturer = "Manufacturer";
         public const string SortByCost = "Cost";
 
+        /// <summary>The amount of items per page.</summary>
+        public const int ItemsPerPage = 4;
+
+
         /// <summary>DB context to work with lamps store DB.</summary>
         private readonly LampsContext db;
 
@@ -40,9 +44,10 @@ namespace LampWebStore.Controllers
         /// List of the products.
         /// </summary>
         /// <remarks>It's async method cuz interaction with the DB could be quite time-consuming.</remarks>
+        /// <param name="page">The current page to display.</param>
         /// <param name="sortingProp">The property by which products will be sorted (or <c>null</c>).</param>
         /// <param name="sortByAsc">Sort products in ascending order.</param>
-        public async Task<IActionResult> Products(string sortingProp, bool sortByAsc = true)
+        public async Task<IActionResult> Products(int page, string sortingProp, bool sortByAsc = true)
         {
             IQueryable<Lamp> ret = db.Lamps;
 
@@ -65,13 +70,24 @@ namespace LampWebStore.Controllers
                     break; //Sorting is not needed
 
                 default:
-                    throw new ArgumentException($"Inappropriate value {sortingProp}.", nameof(sortingProp));
+                    return BadRequest($"Inappropriate value {sortingProp}.");
             }
 
+            int itemsCount = await ret.CountAsync();
+            int totalPages = (int)Math.Ceiling((double)itemsCount / ItemsPerPage);
+
+            if(page < 0 || page >= totalPages)
+                return BadRequest($"The value should be equal or greater than 0 and less than {totalPages}.");
+
             return View(new ProductsViewModel { 
-                Lamps = await ret.AsNoTracking().ToArrayAsync(), 
+                Lamps = await ret.Skip(page * ItemsPerPage)
+                                 .Take(ItemsPerPage)
+                                 .AsNoTracking()
+                                 .ToArrayAsync(), 
                 SortingProp = sortingProp,
-                SortByAsc = sortByAsc
+                SortByAsc = sortByAsc,
+                TotalPages = totalPages,
+                CurrentPage = page
             });
         }
 

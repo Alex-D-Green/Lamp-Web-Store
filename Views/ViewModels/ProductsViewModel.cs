@@ -11,5 +11,9 @@ namespace LampWebStore.Views.ViewModels
         public string SortingProp { get; set; }
 
         public bool SortByAsc { get; set; }
+
+        public int TotalPages { get; set; }
+
+        public int CurrentPage { get; set; }
     }
 }
