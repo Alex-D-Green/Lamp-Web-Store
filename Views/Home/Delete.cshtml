@@ -1,0 +1,19 @@
+﻿@model LampWebStore.Models.Lamp
+@{
+    ViewData["Title"] = "Lamp deletion";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<br/>
+
+<form asp-action="delete" asp-controller="home" asp-antiforgery="true">
+    <div class="form-group">
+        <p>Do you confirm deletion of the lamp: @Model.Manufacturer; @Model.LampType; $@Model.Cost?</p>
+    </div>
+
+    <div class="form-group">
+        <a asp-controller="Home" asp-action="Products" class="btn btn-default">Cancel</a>
+        <input type="submit" value="Confirm deletion" class="btn btn-danger" />
+    </div>
+</form>

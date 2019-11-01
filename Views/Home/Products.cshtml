@@ -38,10 +38,16 @@
 
 <h2>Lamps</h2>
 
-<p class="info">The basic table of all entities from DB, with sorting and pagination.</p>
+<p class="info">The basic table of all entities from DB, with sorting, pagination and CRUD operations.</p>
 <br />
 
-<table class="table">
+<div>
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Create">Add new lamp</a>
+</div>
+
+<br />
+
+<table class="table table-striped">
     <tr class="info">
         <td>
             <a asp-controller="Home" asp-action="Products" asp-route-page="@Model.CurrentPage"
@@ -61,15 +67,31 @@
         <td>
             Photo
         </td>
+        <td></td>
     </tr>
 
     @foreach(var item in Model.Lamps)
     {
         <tr>
-            <td>@item.LampType</td>
-            <td>@item.Manufacturer</td>
-            <td>$@item.Cost</td>
-            <td><img src="@item.ImageRef" class="img-thumbnail" style="max-height:50pt"/></td>
+            <td style="width:20%">@item.LampType</td>
+            <td style="width:30%">@item.Manufacturer</td>
+            <td style="width:20%">$@item.Cost</td>
+            <td style="width:10%">
+            @if(!String.IsNullOrEmpty(item.ImageRef))
+            {
+                <img src="@item.ImageRef" class="img-thumbnail" style="max-height:50pt" />
+            }
+            </td>
+            <td>
+                <a asp-controller="Home" asp-action="Edit" asp-route-id="@item.Id"
+                   class="btn btn-default">
+                    Edit
+                </a>
+                <a asp-controller="Home" asp-action="Delete" asp-route-id="@item.Id"
+                   class="btn btn-danger">
+                    Delete
+                </a>
+            </td>
         </tr>
     }
 </table>
