@@ -1,7 +1,8 @@
 ﻿using LampWebStore.Models;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,16 @@ namespace LampWebStore
             //Getting the default DB connection string from configuration and adding DB context to DI
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<LampsContext>(options => options.UseSqlServer(connection));
+
+            //Used to get and verify password's hashes
+            services.AddSingleton<IPasswordHasher<User>>(new PasswordHasher<User>());
+
+            //Adding authentication based on cookies
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +54,7 @@ namespace LampWebStore
 
             app.UseStaticFiles(); //To gain access to the static files in wwwroot
             app.UseStatusCodePages(); //To see HTTP status codes (very basic way to handle HTTP errors)
+            app.UseAuthentication(); //To plug in authentication
 
             //Adding MVC into the pipeline and defining routes
             app.UseMvc(routes =>

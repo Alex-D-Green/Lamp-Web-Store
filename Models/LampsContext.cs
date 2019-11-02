@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
+
 
 namespace LampWebStore.Models
 {
@@ -9,13 +10,22 @@ namespace LampWebStore.Models
     /// </summary>
     public class LampsContext: DbContext
     {
+        /// <summary>Used to get and verify password's hashes.</summary>
+        private readonly IPasswordHasher<User> passwordHasher;
+
+
+        /// <summary>The users entities' repository, for authentication purposes.</summary>
+        public DbSet<User> Users { get; set; }
+
         /// <summary>The lamp entities' repository.</summary>
         public DbSet<Lamp> Lamps { get; set; }
 
 
-        public LampsContext(DbContextOptions<LampsContext> options)
+        public LampsContext(DbContextOptions<LampsContext> options, IPasswordHasher<User> passwordHasher)
             : base(options)
         {
+            this.passwordHasher = passwordHasher;
+
             Database.EnsureCreated();
         }
 
@@ -80,6 +90,15 @@ namespace LampWebStore.Models
                     Manufacturer = "Philips",
                     Cost = 0.5,
                     ImageRef = "https://avatars.mds.yandex.net/get-mpic/1045304/img_id2657193580316822485.jpeg/9hq"
+                }
+            );
+
+            modelBuilder.Entity<User>().HasData(
+                new User {
+                    Id = 1,
+                    Login = "admin",
+                    Email = "admin@lampstore.com",
+                    PasswordHash = passwordHasher.HashPassword(null, "admin")
                 }
             );
 

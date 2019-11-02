@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Shared\" />
+    <Compile Remove="Migrations\20191102060633_AddingAuthStuff.cs" />
+    <Compile Remove="Migrations\20191102060633_AddingAuthStuff.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

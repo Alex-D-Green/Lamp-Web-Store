@@ -3,14 +3,16 @@ using LampWebStore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LampWebStore.Migrations
 {
     [DbContext(typeof(LampsContext))]
-    partial class LampsContextModelSnapshot : ModelSnapshot
+    [Migration("20191102075204_AddingAuthStuff")]
+    partial class AddingAuthStuff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

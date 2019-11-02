@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using LampWebStore.Models;
 using LampWebStore.Views.ViewModels;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace LampWebStore.Controllers
 {
+    [Authorize] //User should log in to use most of this controller's actions
     public class HomeController: Controller
     {
         //Constants with names of the fields that are available for sorting
@@ -35,6 +38,7 @@ namespace LampWebStore.Controllers
         /// <summary>
         /// Welcome page.
         /// </summary>
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
@@ -47,6 +51,7 @@ namespace LampWebStore.Controllers
         /// <param name="page">The current page to display.</param>
         /// <param name="sortingProp">The property by which products will be sorted (or <c>null</c>).</param>
         /// <param name="sortByAsc">Sort products in ascending order.</param>
+        [AllowAnonymous]
         public async Task<IActionResult> Products(int page, string sortingProp, bool sortByAsc = true)
         {
             IQueryable<Lamp> ret = db.Lamps;
@@ -208,6 +213,7 @@ namespace LampWebStore.Controllers
         /// <summary>
         /// Show some error's info but without sensitive information like stack trace etc.
         /// </summary>
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
