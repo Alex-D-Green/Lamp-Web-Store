@@ -1,0 +1,51 @@
+﻿@page
+@{
+    ViewData["Title"] = "LampsWebApi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Lamps Web Api Demo</h2>
+
+<p class="info">Here data for the table below was fetched by Ajax request to WebApi.</p>
+
+<br />
+
+<table id="lampsTable" class="table table-condensed table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Manufacturer</th>
+            <th>Cost</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function GetLamps() {
+            $.ajax({
+                url: '/api/lamps',
+                type: 'GET',
+                contentType: "application/json",
+                success: function(lamps)
+                {
+                    var rows = "";
+                    $.each(lamps, function(index, lamps) { rows += Row(lamps); })
+                    $("#lampsTable tbody").append(rows);
+                }
+            });
+        };
+
+        function Row(lamp) {
+            return "<tr><td>" + lamp.lampType + "</td>" +
+                   "<td>" + lamp.manufacturer + "</td>" +
+                   "<td>" + lamp.cost + "</td>" +
+                   "<td><img src='" + lamp.imageRef + "' class='img-thumbnail' style='max-height:50pt'/></td></tr>";
+        };
+
+        GetLamps();
+    </script>
+}
